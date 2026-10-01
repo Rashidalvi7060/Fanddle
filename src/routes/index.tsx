@@ -5,7 +5,6 @@ import { RoomDirectory } from "@/components/room-directory";
 import { Disclosure } from "@/components/disclosure";
 import {
   FOUNDING_PLACES,
-  MEMBERSHIP_PRICE_INR,
   ROOM_CAPACITY,
   TOTAL_ROOMS,
 } from "@/data/rooms";
@@ -86,7 +85,7 @@ const faqs = [
     a: "A thousand members is large enough to hold a wide range of experience and small enough that posts do not disappear. 100 rooms × 1,000 members = 100,000 founding places.",
   },
   {
-    q: `What does the ₹${MEMBERSHIP_PRICE_INR} membership include?`,
+    q: `What does the membership include?`,
     a: "A one-time Founding Membership fee covering participation in one selected founding room for the founding period. Exact duration, launch date and the full feature list are being finalised and will be shown in full before any payment is taken.",
   },
   {
@@ -412,7 +411,7 @@ function Landing() {
             <div className="rounded-2xl border border-primary/40 bg-background p-8 shadow-[var(--shadow-lime)]">
               <p className="eyebrow">Founding Membership</p>
               <p className="mt-5 font-display text-6xl text-primary">
-                ₹{MEMBERSHIP_PRICE_INR}
+                [to be confirmed]
               </p>
               <p className="mt-3 text-sm text-muted-foreground">
                 One-time payment · one founding room
@@ -522,7 +521,7 @@ function Landing() {
               announced only once secured.
             </Disclosure>
             <Disclosure title="Payment, membership duration, cancellation and refunds">
-              The Founding Membership is ₹{MEMBERSHIP_PRICE_INR}, a one-time payment covering one
+              The Founding Membership is [to be confirmed], a one-time payment covering one
               selected founding room. [Placeholder: access duration, cancellation window and
               refund policy must be finalised and published before any payment is accepted.] No
               payments are being collected until then.
