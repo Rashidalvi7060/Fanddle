@@ -7,7 +7,9 @@ export function useInView<T extends Element>(once = true) {
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
-      ([e]) => {
+      (entries) => {
+        const e = entries[0];
+        if (!e) return;
         if (e.isIntersecting) {
           setInView(true);
           if (once) io.disconnect();
