@@ -1,10 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { categories, rooms, ROOM_CAPACITY, type Room } from "@/data/rooms";
+import { categories, rooms, ROOM_CAPACITY, TOTAL_ROOMS, type Room } from "@/data/rooms";
+import { roomImage } from "@/data/room-images";
 
 export function RoomCard({ room }: { room: Room }) {
   return (
-    <article className="group flex flex-col justify-between rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/50">
+    <article className="group flex flex-col justify-between overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/50">
+      <div className="relative h-40 overflow-hidden">
+        <img src={roomImage(room.category)} alt="" loading="lazy" width={768} height={1024} className="h-full w-full object-cover grayscale opacity-60 transition-transform duration-700 group-hover:scale-105" />
+        <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
+      </div>
+      <div className="flex flex-1 flex-col justify-between px-6 pb-6">
       <div>
         <div className="flex items-center justify-between">
           <span className="font-display text-xs tracking-[0.3em] text-primary">
@@ -32,9 +38,10 @@ export function RoomCard({ room }: { room: Room }) {
             params={{ roomId: room.id }}
             className="rounded-full border border-primary px-4 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
           >
-            Explore Room
+            Explore Room →
           </Link>
         </div>
+      </div>
       </div>
     </article>
   );
@@ -117,7 +124,7 @@ export function RoomDirectory({ limit }: { limit?: number }) {
             to="/rooms"
             className="inline-flex rounded-full border border-border px-6 py-3 text-sm text-foreground transition-colors hover:border-primary hover:text-primary"
           >
-            View the full directory of 100 rooms
+            View all {TOTAL_ROOMS} rooms →
           </Link>
         </div>
       )}

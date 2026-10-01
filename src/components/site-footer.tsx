@@ -1,14 +1,15 @@
 import { Link } from "@tanstack/react-router";
 
 export function SiteFooter() {
+  const item = "block text-muted-foreground hover:text-foreground";
   return (
     <footer className="border-t border-border bg-background">
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div className="max-w-sm">
-            <p className="font-display text-sm font-semibold tracking-[0.35em]">FANDDLE</p>
+            <p className="font-display text-sm font-bold tracking-[0.35em]">FANDDLE</p>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              A people-powered network of 100 founding rooms. Members share real problems,
+              A people-powered network of 200 planned founding rooms. Members share problems,
               exchange experience and voluntarily help each other.
             </p>
           </div>
@@ -16,33 +17,22 @@ export function SiteFooter() {
           <div className="grid grid-cols-2 gap-10 text-sm sm:grid-cols-3">
             <div className="space-y-3">
               <p className="eyebrow">Explore</p>
-              <Link to="/rooms" className="block text-muted-foreground hover:text-foreground">
-                Room directory
-              </Link>
-              <Link to="/" hash="membership" className="block text-muted-foreground hover:text-foreground">
-                Founding membership
-              </Link>
-              <Link to="/" hash="faq" className="block text-muted-foreground hover:text-foreground">
-                FAQ
-              </Link>
+              <Link to="/rooms" className={item}>Room directory</Link>
+              <Link to="/" hash="how" className={item}>How it works</Link>
+              <Link to="/" hash="faq" className={item}>FAQ</Link>
             </div>
             <div className="space-y-3">
               <p className="eyebrow">Legal</p>
-              <Link to="/terms" className="block text-muted-foreground hover:text-foreground">
-                Membership terms
-              </Link>
-              <Link to="/terms" hash="privacy" className="block text-muted-foreground hover:text-foreground">
-                Privacy notice
-              </Link>
-              <Link to="/terms" hash="refunds" className="block text-muted-foreground hover:text-foreground">
-                Refund policy
-              </Link>
+              <Link to="/terms" className={item}>Terms</Link>
+              <Link to="/terms" hash="privacy" className={item}>Privacy Policy</Link>
+              <Link to="/terms" hash="guidelines" className={item}>Community Guidelines</Link>
             </div>
             <div className="space-y-3">
               <p className="eyebrow">Support</p>
-              <p className="text-muted-foreground">
-                [Placeholder: support email to be provided before launch]
-              </p>
+              <Link to="/terms" hash="contact" className={item}>Contact</Link>
+              <Link to="/terms" hash="report" className="block font-medium text-primary hover:opacity-80">
+                Report misuse
+              </Link>
             </div>
           </div>
         </div>
@@ -54,8 +44,8 @@ export function SiteFooter() {
           medical, psychological and financial questions may require qualified professionals.
         </p>
         <p className="mt-4 text-xs text-muted-foreground">
-          © {new Date().getFullYear()} FANDDLE. Pre-launch. Details marked as placeholders must be
-          confirmed before registration opens.
+          © {new Date().getFullYear()} FANDDLE. Concept stage. Details marked as placeholders will
+          be confirmed before registration opens.
         </p>
       </div>
     </footer>

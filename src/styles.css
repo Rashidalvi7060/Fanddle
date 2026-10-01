@@ -51,22 +51,22 @@
   --radius: 0.5rem;
 
   /* #090B0A */
-  --background: oklch(0.152 0.004 165);
+  --background: #080909;
   /* #F4F3ED */
-  --foreground: oklch(0.958 0.008 106);
+  --foreground: #F5F5F0;
   /* #171B19 */
-  --card: oklch(0.226 0.006 165);
+  --card: #191D1A;
   --card-foreground: oklch(0.958 0.008 106);
   --popover: oklch(0.226 0.006 165);
   --popover-foreground: oklch(0.958 0.008 106);
   /* #C5F467 */
   --primary: oklch(0.923 0.171 122);
-  --primary-foreground: oklch(0.152 0.004 165);
+  --primary-foreground: #080909;
   --secondary: oklch(0.262 0.007 165);
   --secondary-foreground: oklch(0.958 0.008 106);
   --muted: oklch(0.226 0.006 165);
   /* #899889 */
-  --muted-foreground: oklch(0.655 0.019 145);
+  --muted-foreground: #A7ADA7;
   --accent: oklch(0.262 0.007 165);
   --accent-foreground: oklch(0.923 0.171 122);
   --destructive: oklch(0.62 0.2 25);
@@ -74,7 +74,7 @@
   --border: oklch(0.3 0.006 165);
   --input: oklch(0.3 0.006 165);
   --ring: oklch(0.923 0.171 122);
-  --surface: oklch(0.19 0.005 165);
+  --surface: #111412;
   --surface-foreground: oklch(0.958 0.008 106);
 }
 
@@ -158,4 +158,41 @@
 @utility line-draw {
   transform-origin: left;
   animation: fanddle-line 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fanddle-border {
+  to { --fanddle-angle: 360deg; }
+}
+@property --fanddle-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@utility glow-border {
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--color-background), var(--color-background)) padding-box,
+    conic-gradient(from var(--fanddle-angle), transparent 0deg, var(--color-primary) 60deg, transparent 140deg, transparent 360deg) border-box;
+  animation: fanddle-border 6s linear infinite;
+}
+@keyframes fanddle-pulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+@utility pulse-dot {
+  animation: fanddle-pulse 3.2s ease-in-out infinite;
+}
+@utility headline {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1); }
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .glow-border, .pulse-dot { animation: none; }
 }

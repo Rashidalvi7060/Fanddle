@@ -9,9 +9,14 @@ export type Room = {
 type Group = { category: string; blurb: string; titles: string[] };
 
 export const ROOM_CAPACITY = 1000;
-export const TOTAL_ROOMS = 100;
+export const TOTAL_ROOMS = 200;
 export const FOUNDING_PLACES = ROOM_CAPACITY * TOTAL_ROOMS;
-export const MEMBERSHIP_PRICE_INR = 899;
+
+/**
+ * Confirmed registrations. Must come from real backend data.
+ * null = no registration system connected yet; UI must not show a member count.
+ */
+export const CONFIRMED_REGISTRATIONS: number | null = null;
 
 const groups: Group[] = [
   {
@@ -27,6 +32,14 @@ const groups: Group[] = [
       "Money Conversations at Home",
       "Freelance & Irregular Earnings",
       "Insurance & Financial Protection",
+      "Credit Scores & Rebuilding Credit",
+      "Taxes for Individuals",
+      "Retirement Planning",
+      "Supporting Family Financially",
+      "Medical Bills & Unexpected Costs",
+      "Side Income Ideas",
+      "Avoiding Financial Scams",
+      "Buying or Renting a Home",
     ],
   },
   {
@@ -42,6 +55,14 @@ const groups: Group[] = [
       "Remote & Hybrid Work Realities",
       "First Jobs & Early Career",
       "Leadership & Managing People",
+      "Resumes & LinkedIn Profiles",
+      "Working Abroad",
+      "Returning After a Career Break",
+      "Government & Public Sector Jobs",
+      "Mid-career Uncertainty",
+      "Mentorship & Finding Guidance",
+      "Gig Work & Contract Roles",
+      "Work-life Balance",
     ],
   },
   {
@@ -57,6 +78,14 @@ const groups: Group[] = [
       "Scaling Operations",
       "Closing, Pivoting & Starting Over",
       "Small Shops & Local Business",
+      "Validating a Business Idea",
+      "Suppliers & Manufacturing",
+      "E-commerce & Online Stores",
+      "Family Business Transitions",
+      "Franchises & Licensing",
+      "Restaurants & Food Business",
+      "Bootstrapping Without Investors",
+      "Founder Stress & Isolation",
     ],
   },
   {
@@ -71,6 +100,14 @@ const groups: Group[] = [
       "Retention & Customer Care",
       "Agencies & Client Work",
       "Selling Without a Network",
+      "B2B Sales Cycles",
+      "Social Media for Small Business",
+      "Handling Rejection in Sales",
+      "Partnerships & Referrals",
+      "SEO & Being Found Online",
+      "Events & Offline Marketing",
+      "Product Launches",
+      "Customer Complaints & Reviews",
     ],
   },
   {
@@ -85,6 +122,15 @@ const groups: Group[] = [
       "Long-distance & Migration",
       "Social Anxiety & Belonging",
       "Community & Making New Circles",
+      "Moving to a New City",
+      "Toxic Relationships",
+      "Reconnecting With Old Friends",
+      "Neighbours & Shared Living",
+      "Cultural & Interfaith Relationships",
+      "Divorce & Rebuilding",
+      "Being an Introvert",
+      "Workplace Friendships",
+      "Forgiveness & Reconciliation",
     ],
   },
   {
@@ -99,6 +145,15 @@ const groups: Group[] = [
       "Single Parents",
       "Household Finances Together",
       "Relocation & Family Decisions",
+      "Parenting Teenagers",
+      "New Parents",
+      "Children With Special Needs",
+      "Fertility & Adoption",
+      "Blended Families",
+      "Family Conflict & Estrangement",
+      "Elder Care Logistics",
+      "Raising Kids Abroad",
+      "Balancing Career & Family",
     ],
   },
   {
@@ -113,6 +168,15 @@ const groups: Group[] = [
       "Recovery & Habits",
       "Sleep, Stress & Routine",
       "Starting Therapy: Questions",
+      "Turning 30, 40, 50",
+      "Retirement & Purpose",
+      "Feeling Stuck",
+      "Coping With Uncertainty",
+      "Loss of a Pet",
+      "Mindfulness & Calm",
+      "Overthinking",
+      "Starting Over After a Setback",
+      "Quarter-life Questions",
     ],
   },
   {
@@ -127,6 +191,14 @@ const groups: Group[] = [
       "Small Business Compliance",
       "Online Fraud & Reporting",
       "Understanding Legal Paperwork",
+      "Wills & Succession",
+      "Immigration & Visas",
+      "Intellectual Property Basics",
+      "Debt Recovery & Notices",
+      "Road Accidents & Claims",
+      "Finding the Right Lawyer",
+      "Data Privacy Rights",
+      "Neighbour & Society Disputes",
     ],
   },
   {
@@ -141,10 +213,19 @@ const groups: Group[] = [
       "Design & Creative Skills",
       "Languages & Communication Skills",
       "Learning Later in Life",
+      "Competitive Exam Preparation",
+      "Online Courses That Are Worth It",
+      "Data & Analytics Skills",
+      "Trades & Vocational Skills",
+      "Dropping Out & Alternative Paths",
+      "Teaching & Tutoring",
+      "Research & Higher Studies",
+      "Learning Disabilities & Support",
+      "AI Tools & New Skills",
     ],
   },
   {
-    category: "Confidence, Communication & Personal Growth",
+    category: "Confidence & Personal Growth",
     blurb: "For the skills nobody formally teaches.",
     titles: [
       "Speaking Up & Public Speaking",
@@ -155,6 +236,14 @@ const groups: Group[] = [
       "Personal Brand & Visibility",
       "Handling Criticism",
       "Rebuilding After Failure",
+      "Decision Making",
+      "Goal Setting That Works",
+      "Imposter Feelings",
+      "Saying No",
+      "Habits & Routines",
+      "Fear of Failure",
+      "Finding Your Direction",
+      "Emotional Intelligence",
     ],
   },
   {
@@ -169,6 +258,15 @@ const groups: Group[] = [
       "Medical Costs & Insurance Claims",
       "Finding Reliable Specialists",
       "Recovery & Rehabilitation",
+      "Women's Health Questions",
+      "Living With Disability",
+      "Weight & Body Image",
+      "Quitting Smoking & Alcohol",
+      "Back, Joint & Posture Pain",
+      "Diabetes & Lifestyle",
+      "Heart Health",
+      "Second Opinions",
+      "Healthy Ageing",
     ],
   },
   {
@@ -182,6 +280,15 @@ const groups: Group[] = [
       "Creator Economy & Monetisation",
       "Feedback & Critique",
       "Open Projects & Volunteering",
+      "Photography & Visual Art",
+      "Podcasting & Audio",
+      "Game Development",
+      "Crafts & Handmade Goods",
+      "Fashion & Design",
+      "Social Impact Projects",
+      "Hackathons & Build Weekends",
+      "Creative Block",
+      "Building in Public",
     ],
   },
 ];
