@@ -14,13 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      interest_registrations: {
+        Row: {
+          consent: boolean
+          created_at: string
+          email: string
+          id: string
+          name: string
+          room_interest: string | null
+        }
+        Insert: {
+          consent?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          room_interest?: string | null
+        }
+        Update: {
+          consent?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          room_interest?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      interest_count: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
