@@ -296,7 +296,7 @@ function Landing() {
         <div className="mx-auto max-w-4xl px-5 sm:px-8">
           <h2 className={h2}>Questions</h2>
           <div className="mt-12">
-            {faqs.map(([q, a]) => <Disclosure key={q} title={q}>{a}</Disclosure>)}
+            {faqs.map(([q, a]) => <Disclosure key={q} title={q ?? ""}>{a}</Disclosure>)}
           </div>
         </div>
       </section>
