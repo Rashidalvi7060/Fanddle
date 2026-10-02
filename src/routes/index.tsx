@@ -66,7 +66,7 @@ const rules = [
   "Legal, medical and psychological questions may need a qualified professional.",
 ];
 
-const faqs = [
+const faqs: [string, string][] = [
   ["What is FANDDLE?", "A people-powered network of focused rooms where members share problems, exchange experience and voluntarily help one another. It is not a social feed, a charity, or an AI advice tool."],
   ["How do the rooms work?", "Each room is dedicated to one kind of situation. You join the room closest to what you're facing, share it, and members who choose to respond can offer ideas, experience or help."],
   ["What kinds of problems can people share?", "Financial, career, business, social, legal, emotional, educational or personal challenges — within the community rules."],
