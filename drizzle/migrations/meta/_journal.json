@@ -8,6 +8,13 @@
       "when": 1790942247325,
       "tag": "0000_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791298460236,
+      "tag": "0001_add_private_room_registrations",
+      "breakpoints": true
     }
   ]
 }

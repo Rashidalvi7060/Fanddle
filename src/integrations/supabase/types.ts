@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      fanddle_room_registrations: {
+        Row: {
+          age: number
+          city: string
+          community_rules_consent: boolean
+          created_at: string
+          custom_answers: Json
+          email: string
+          id: string
+          name: string
+          occupation: string
+          phone: string
+          reason: string
+          registration_status: string
+          room_id: string
+          room_name: string
+        }
+        Insert: {
+          age: number
+          city: string
+          community_rules_consent?: boolean
+          created_at?: string
+          custom_answers?: Json
+          email: string
+          id?: string
+          name: string
+          occupation: string
+          phone: string
+          reason: string
+          registration_status?: string
+          room_id: string
+          room_name: string
+        }
+        Update: {
+          age?: number
+          city?: string
+          community_rules_consent?: boolean
+          created_at?: string
+          custom_answers?: Json
+          email?: string
+          id?: string
+          name?: string
+          occupation?: string
+          phone?: string
+          reason?: string
+          registration_status?: string
+          room_id?: string
+          room_name?: string
+        }
+        Relationships: []
+      }
       interest_registrations: {
         Row: {
           consent: boolean
