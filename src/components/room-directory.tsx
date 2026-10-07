@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { categories, rooms, ROOM_CAPACITY, TOTAL_ROOMS, type Room } from "@/data/rooms";
 import { roomImage } from "@/data/room-images";
+import { Button } from "@/components/ui/button";
+import { openRegistrationDialog } from "@/components/room-registration";
 
 export function RoomCard({ room }: { room: Room }) {
   return (
@@ -16,9 +18,7 @@ export function RoomCard({ room }: { room: Room }) {
           <span className="font-display text-xs tracking-[0.3em] text-primary">
             ROOM {room.id}
           </span>
-          <span className="rounded-full border border-border px-2.5 py-1 text-[10px] uppercase tracking-widest text-muted-foreground">
-            Planned
-          </span>
+          <span className="rounded-full border border-primary/50 px-2.5 py-1 text-[10px] uppercase tracking-widest text-primary">Registration open</span>
         </div>
         <h3 className="mt-5 font-display text-lg leading-snug text-foreground">{room.title}</h3>
         <p className="mt-2 text-xs uppercase tracking-widest text-muted-foreground">
@@ -30,17 +30,16 @@ export function RoomCard({ room }: { room: Room }) {
       <div className="mt-6">
         <div className="hairline" />
         <div className="mt-4 flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">
-            Capacity {ROOM_CAPACITY.toLocaleString("en-IN")}
-          </span>
+          <span className="text-xs text-muted-foreground">A room for shared experience</span>
           <Link
             to="/rooms/$roomId"
             params={{ roomId: room.id }}
             className="rounded-full border border-primary px-4 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
           >
-            Explore Room →
+            Room details →
           </Link>
         </div>
+        <Button onClick={() => openRegistrationDialog(room)} className="mt-4 w-full">JOIN THIS ROOM</Button>
       </div>
       </div>
     </article>
@@ -81,7 +80,7 @@ export function RoomDirectory({ limit }: { limit?: number }) {
           />
         </label>
         <p className="text-xs text-muted-foreground">
-          {filtered.length} of {rooms.length} planned rooms
+          {filtered.length} of {rooms.length} rooms
         </p>
       </div>
 

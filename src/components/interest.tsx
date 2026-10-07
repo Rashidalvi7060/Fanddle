@@ -1,108 +1,47 @@
-import { useEffect, useState } from "react";
-import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
-import { categories, FOUNDING_PLACES } from "@/data/rooms";
-import { CountUp } from "@/components/reveal";
+import { siteSettings } from "@/data/site-settings";
 
-const schema = z.object({
-  name: z.string().trim().min(1, "Please enter your name").max(100),
-  email: z.string().trim().email("Please enter a valid email").max(255),
-  room_interest: z.string().max(120).optional(),
-  consent: z.literal(true, { errorMap: () => ({ message: "Please confirm to continue" }) }),
-});
-
-export function RegistrationCounter() {
-  const [count, setCount] = useState<number | null>(null);
-  useEffect(() => {
-    supabase.rpc("interest_count").then(({ data, error }) => {
-      if (!error && typeof data === "number") setCount(data);
-    });
-  }, []);
-
-  return (
-    <div className="grid gap-10 md:grid-cols-2">
-      <div className="rounded-2xl border border-border bg-card p-10">
-        {count && count > 0 ? (
-          <>
-            <p className="font-display text-6xl font-extrabold text-primary sm:text-7xl">
-              <CountUp value={count} />
-            </p>
-            <p className="eyebrow mt-4">People have registered interest in FANDDLE</p>
-          </>
-        ) : (
-          <>
-            <p className="font-display text-4xl font-extrabold text-foreground sm:text-5xl">Be among the first</p>
-            <p className="eyebrow mt-4">Registrations of interest are just opening</p>
-          </>
-        )}
-      </div>
-      <div className="rounded-2xl border border-primary/40 bg-card p-10">
-        <p className="font-display text-6xl font-extrabold text-foreground sm:text-7xl">
-          <CountUp value={FOUNDING_PLACES} />
-        </p>
-        <p className="eyebrow mt-4">Up to 200,000 founding places</p>
-      </div>
-    </div>
-  );
+function getTimeRemaining() {
+  const remaining = Math.max(0, new Date(siteSettings.registrationDeadline).getTime() - Date.now());
+  return {
+    days: Math.floor(remaining / 86_400_000),
+    hours: Math.floor((remaining % 86_400_000) / 3_600_000),
+    minutes: Math.floor((remaining % 3_600_000) / 60_000),
+    seconds: Math.floor((remaining % 60_000) / 1_000),
+  };
 }
 
-export function InterestForm() {
-  const [form, setForm] = useState({ name: "", email: "", room_interest: "", consent: false });
-  const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
+export function RegistrationCounter() {
+  const [time, setTime] = useState(getTimeRemaining);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    const parsed = schema.safeParse({ ...form, room_interest: form.room_interest || undefined });
-    if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? "Please check the form");
-      return;
-    }
-    setStatus("sending");
-    const { error: dbError } = await supabase.from("interest_registrations").insert({
-      name: parsed.data.name,
-      email: parsed.data.email.toLowerCase(),
-      room_interest: parsed.data.room_interest ?? null,
-      consent: true,
-    });
-    if (dbError) {
-      setStatus("idle");
-      setError(dbError.code === "23505" ? "This email has already registered interest." : "Something went wrong. Please try again.");
-      return;
-    }
-    setStatus("done");
-  }
+  useEffect(() => {
+    if (!siteSettings.showCountdown) return;
+    const timer = window.setInterval(() => setTime(getTimeRemaining()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
 
-  if (status === "done") {
-    return (
-      <div className="rounded-2xl border border-primary/50 bg-card p-10 text-center">
-        <p className="font-display text-2xl font-bold text-primary">THANK YOU.</p>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Your interest is recorded. This is not a confirmed membership — we'll contact you when founding registration opens.
-        </p>
-      </div>
-    );
-  }
-
-  const field = "w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none";
+  const isClosed = Object.values(time).every((value) => value === 0);
 
   return (
-    <form onSubmit={submit} className="space-y-4 rounded-2xl border border-border bg-card p-8 sm:p-10" noValidate>
-      <input className={field} placeholder="Your name" maxLength={100} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} aria-label="Your name" />
-      <input className={field} type="email" placeholder="Email address" maxLength={255} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} aria-label="Email address" />
-      <select className={field} value={form.room_interest} onChange={(e) => setForm({ ...form, room_interest: e.target.value })} aria-label="Area of interest">
-        <option value="">Area of interest (optional)</option>
-        {categories.map((c) => <option key={c} value={c}>{c}</option>)}
-      </select>
-      <label className="flex items-start gap-3 text-xs text-muted-foreground">
-        <input type="checkbox" className="mt-0.5 accent-primary" checked={form.consent} onChange={(e) => setForm({ ...form, consent: e.target.checked })} />
-        I understand that registering interest does not confirm membership, and I agree to be contacted about FANDDLE.
-      </label>
-      {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
-      <button type="submit" disabled={status === "sending"} className="w-full rounded-full bg-primary px-6 py-4 font-display text-sm font-bold tracking-wider text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60">
-        {status === "sending" ? "SENDING…" : "REGISTER MY INTEREST →"}
-      </button>
-    </form>
+    <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-stretch">
+      <div className="border-y border-border py-8 sm:py-10">
+        <p className="eyebrow text-primary">A WORLD OF PEOPLE, ONE SHARED PURPOSE</p>
+        <p className="mt-4 font-display text-5xl font-extrabold text-foreground sm:text-7xl">{siteSettings.joinedCountDisplay}</p>
+        <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">A global-scale vision for people to find a room, share experience and show up for one another.</p>
+      </div>
+      <div className="border-y border-primary/50 bg-card px-6 py-8 sm:px-8 sm:py-10 lg:min-w-[370px]">
+        <p className="eyebrow text-primary">{isClosed ? "REGISTRATION CLOSED" : siteSettings.countdownText}</p>
+        {siteSettings.showCountdown && !isClosed ? (
+          <div className="mt-5 grid grid-cols-4 gap-3" aria-label={`${time.days} days, ${time.hours} hours, ${time.minutes} minutes, ${time.seconds} seconds remaining`}>
+            {([["DAYS", time.days], ["HOURS", time.hours], ["MINUTES", time.minutes], ["SECONDS", time.seconds]] as const).map(([label, value]) => (
+              <div key={label} className="text-center">
+                <p className="font-display text-3xl font-bold tabular-nums text-foreground">{String(value).padStart(2, "0")}</p>
+                <p className="mt-2 text-[9px] font-semibold tracking-wider text-muted-foreground">{label}</p>
+              </div>
+            ))}
+          </div>
+        ) : <p className="mt-5 font-display text-2xl font-bold text-foreground">Registration is closed.</p>}
+        <p className="mt-5 text-xs text-muted-foreground">Closes 15 October 2026</p>
+      </div>
+    </div>
   );
 }

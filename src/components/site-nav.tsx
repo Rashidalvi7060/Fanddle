@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { openRegistrationDialog } from "@/components/room-registration";
 
 const links = [
   { label: "The Idea", to: "/", hash: "idea" },
-  { label: "How It Works", to: "/", hash: "how" },
   { label: "Rooms", to: "/rooms", hash: undefined },
   { label: "Community Rules", to: "/", hash: "support" },
   { label: "FAQ", to: "/", hash: "faq" },
@@ -30,12 +31,7 @@ export function SiteNav() {
               {l.label}
             </Link>
           ))}
-          <Link
-            to="/rooms"
-            className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-          >
-            Explore the Rooms
-          </Link>
+          <Button onClick={() => openRegistrationDialog()} className="rounded-full px-5">JOIN NOW</Button>
         </div>
 
         <button
@@ -66,13 +62,7 @@ export function SiteNav() {
                 {l.label}
               </Link>
             ))}
-            <Link
-              to="/rooms"
-              onClick={() => setOpen(false)}
-              className="rounded-full bg-primary px-5 py-3 text-center text-sm font-semibold text-primary-foreground"
-            >
-              Explore the Rooms
-            </Link>
+            <Button onClick={() => { setOpen(false); openRegistrationDialog(); }} className="rounded-full py-5">JOIN NOW</Button>
           </div>
         </div>
       )}

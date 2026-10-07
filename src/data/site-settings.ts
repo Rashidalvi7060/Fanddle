@@ -1,9 +1,9 @@
 export const siteSettings = {
-  joinedCount: 100_000,
+  joinedCountDisplay: "100,000+",
   registrationStatus: "OPEN" as const,
   registrationDeadline: "2026-10-15T23:59:59+05:30",
   showCountdown: true,
-  countdownText: "Registrations are open until 15 October.",
+  countdownText: "REGISTRATION CLOSES IN",
 };
 
 export const registrationFields = [
