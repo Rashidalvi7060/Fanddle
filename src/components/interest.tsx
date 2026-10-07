@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { siteSettings } from "@/data/site-settings";
 
 function getTimeRemaining() {
