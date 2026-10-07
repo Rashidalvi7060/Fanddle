@@ -4,7 +4,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { RoomDirectory } from "@/components/room-directory";
 import { Disclosure } from "@/components/disclosure";
 import { Reveal } from "@/components/reveal";
-import { InterestForm, RegistrationCounter } from "@/components/interest";
+import { RegistrationCounter } from "@/components/interest";
+import { Button } from "@/components/ui/button";
+import { openRegistrationDialog } from "@/components/room-registration";
 import heroImg from "@/assets/hero.jpg";
 import ideaImg from "@/assets/idea.jpg";
 import doorImg from "@/assets/door.jpg";
@@ -113,7 +115,7 @@ function Landing() {
           </div>
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
             <Link to="/rooms" className={cta}>EXPLORE THE ROOMS →</Link>
-            <Link to="/" hash="how" className={ghost}>DISCOVER HOW IT WORKS</Link>
+            <Button onClick={() => openRegistrationDialog()} className={ghost}>JOIN NOW</Button>
           </div>
         </div>
       </section>
@@ -259,7 +261,7 @@ function Landing() {
         <div className={`relative ${wrap}`}>
           <Reveal><h2 className={`${h2} max-w-4xl`}>This founding chapter will not open again.</h2></Reveal>
           <p className="mt-8 max-w-2xl text-lg text-muted-foreground">We are building a defined network of 200 founding rooms, with a maximum capacity of 1,000 people in each. Once all founding places are filled, registration for these specific founding rooms will close permanently.</p>
-          <p className="mt-8 font-display text-xl font-bold tracking-wider text-primary">CHOOSE YOUR ROOM BEFORE IT FILLS.</p>
+          <p className="mt-8 font-display text-xl font-bold tracking-wider text-primary">REGISTRATION CLOSES 15 OCTOBER 2026.</p>
           <Link to="/rooms" className={`${cta} mt-8`}>EXPLORE THE ROOMS →</Link>
         </div>
       </section>
@@ -270,10 +272,15 @@ function Landing() {
           <RegistrationCounter />
           <div className="mt-16 grid items-start gap-12 lg:grid-cols-2">
             <div>
-              <h2 className={h2}>Register your interest.</h2>
-              <p className="mt-6 text-lg text-muted-foreground">Be the first to know when founding registration opens. Registering interest is free and does not confirm membership.</p>
+              <h2 className={h2}>Find the room that feels like yours.</h2>
+              <p className="mt-6 text-lg text-muted-foreground">Choose a room and tell us a little about yourself. Your request goes directly to the FANDDLE team for review.</p>
+              <Button onClick={() => openRegistrationDialog()} className={`${cta} mt-8`}>JOIN NOW →</Button>
             </div>
-            <InterestForm />
+            <div className="border-l border-border pl-8">
+              <p className="font-display text-5xl font-extrabold text-foreground">200</p>
+              <p className="eyebrow mt-3">Founding rooms across shared experiences</p>
+              <p className="mt-6 max-w-md text-sm leading-relaxed text-muted-foreground">Your registration is private. Submitting a request does not guarantee or confirm membership.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -286,7 +293,7 @@ function Landing() {
           <p className="mx-auto mt-8 max-w-2xl text-lg text-muted-foreground">Your problem does not have to be your entire story. Discover a network built around people, shared experience, and the willingness to help.</p>
           <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
             <Link to="/rooms" className={cta}>EXPLORE FANDDLE'S ROOMS →</Link>
-            <Link to="/" hash="how" className={ghost}>LEARN HOW IT WORKS</Link>
+            <Button onClick={() => openRegistrationDialog()} className={ghost}>JOIN NOW</Button>
           </div>
         </div>
       </section>
