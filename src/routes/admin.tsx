@@ -120,10 +120,14 @@ function Dashboard({ onLogout, email }: { onLogout: () => void; email: string })
 type Registration = {
   id: string;
   name: string;
-  email: string | null;
-  phone: string | null;
-  room: string | null;
-  message: string | null;
+  email: string;
+  phone: string;
+  age: number;
+  city: string;
+  occupation: string;
+  reason: string;
+  room_id: string;
+  room_name: string;
   created_at: string;
 };
 
@@ -135,7 +139,7 @@ function UsersTab() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await db.from("registrations").select("*").order("created_at", { ascending: false });
+    const { data, error } = await db.from("fanddle_room_registrations").select("*").order("created_at", { ascending: false });
     if (error) setError(error.message);
     else setRows(data ?? []);
     setLoading(false);
@@ -148,21 +152,21 @@ function UsersTab() {
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return rows;
-    return rows.filter((r) => [r.name, r.email, r.phone, r.room].some((v) => (v ?? "").toLowerCase().includes(s)));
+    return rows.filter((r) => [r.name, r.email, r.phone, r.city, r.room_name, r.occupation].some((v) => (v ?? "").toLowerCase().includes(s)));
   }, [rows, q]);
 
   const remove = async (id: string) => {
     if (!window.confirm("Delete this registration? This cannot be undone.")) return;
-    const { error } = await db.from("registrations").delete().eq("id", id);
+    const { error } = await db.from("fanddle_room_registrations").delete().eq("id", id);
     if (error) setError(error.message);
     else setRows((r) => r.filter((x) => x.id !== id));
   };
 
   const exportCsv = () => {
-    const esc = (v: string | null) => `"${(v ?? "").replace(/"/g, '""')}"`;
+    const esc = (v: string | number | null) => `"${String(v ?? "").replace(/"/g, '""')}"`;
     const lines = [
-      ["Name", "Email", "Phone", "Room", "Message", "Registered at"].join(","),
-      ...filtered.map((r) => [r.name, r.email, r.phone, r.room, r.message, new Date(r.created_at).toLocaleString("en-IN")].map(esc).join(",")),
+      ["Name", "Email", "Phone", "Age", "City", "Occupation", "Room", "Reason", "Registered at"].join(","),
+      ...filtered.map((r) => [r.name, r.email, r.phone, r.age, r.city, r.occupation, `${r.room_id} ${r.room_name}`, r.reason, new Date(r.created_at).toLocaleString("en-IN")].map(esc).join(",")),
     ];
     const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -177,7 +181,7 @@ function UsersTab() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
         <p className="font-display text-lg font-bold">{rows.length} registered</p>
-        <input className={`${inp} max-w-xs`} placeholder="Search name, email, phone, room" value={q} onChange={(e) => setQ(e.target.value)} />
+        <input className={`${inp} max-w-xs`} placeholder="Search name, email, phone, city, room" value={q} onChange={(e) => setQ(e.target.value)} />
         <button className={btnGhost} onClick={load}>Refresh</button>
         <button className={btnGhost} onClick={exportCsv} disabled={!filtered.length}>Download CSV</button>
       </div>
@@ -191,7 +195,7 @@ function UsersTab() {
           <table className="w-full text-left text-sm">
             <thead className="bg-card text-xs text-muted-foreground">
               <tr>
-                {["Name", "Email", "Phone", "Room", "Registered", ""].map((h) => (
+                {["Name", "Email", "Phone", "City", "Room", "Registered", ""].map((h) => (
                   <th key={h} className="px-4 py-3 font-semibold">{h}</th>
                 ))}
               </tr>
@@ -202,7 +206,8 @@ function UsersTab() {
                   <td className="px-4 py-3">{r.name}</td>
                   <td className="px-4 py-3">{r.email}</td>
                   <td className="px-4 py-3">{r.phone}</td>
-                  <td className="px-4 py-3">{r.room}</td>
+                  <td className="px-4 py-3">{r.city}</td>
+                  <td className="px-4 py-3">{r.room_id} · {r.room_name}</td>
                   <td className="whitespace-nowrap px-4 py-3">{new Date(r.created_at).toLocaleString("en-IN")}</td>
                   <td className="px-4 py-3">
                     <button className="text-xs text-red-400 hover:underline" onClick={() => remove(r.id)}>Delete</button>
