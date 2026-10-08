@@ -78,6 +78,16 @@ export function RoomRegistrationDialog() {
     Date.now() < new Date(settings.registration_deadline).getTime();
 
   useEffect(() => {
+    // remember who invited this visitor (link looks like /?ref=1a2b3c4d)
+    try {
+      const ref = new URLSearchParams(window.location.search).get("ref");
+      if (ref && /^[0-9a-f]{8}$/i.test(ref)) window.localStorage.setItem("fanddle:ref", ref.toLowerCase());
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
     const handleOpen = (event: Event) => {
       const detail = (event as CustomEvent<{ roomId?: string }>).detail;
       setRoomId(detail?.roomId ?? "");
@@ -120,16 +130,38 @@ export function RoomRegistrationDialog() {
     }
 
     setStatus("sending");
-    const { error: submitError } = await supabase.from("fanddle_room_registrations").insert({
+    let referredBy: string | null = null;
+    try {
+      const stored = window.localStorage.getItem("fanddle:ref");
+      if (stored && /^[0-9a-f]{8}$/.test(stored)) referredBy = stored;
+    } catch {
+      // ignore
+    }
+    const { error: submitError } = await (supabase as any).from("fanddle_room_registrations").insert({
       ...parsed.data,
       email: parsed.data.email.toLowerCase(),
       room_name: selectedRoom.title,
+      referred_by: referredBy,
     });
 
     if (submitError) {
       setStatus("idle");
       setError("We couldn't save your registration. Please try again.");
       return;
+    }
+
+    try {
+      window.localStorage.setItem(
+        "fanddle:registration",
+        JSON.stringify({
+          name: parsed.data.name,
+          email: parsed.data.email.toLowerCase(),
+          room_id: selectedRoom.id,
+          room_name: selectedRoom.title,
+        }),
+      );
+    } catch {
+      // storage can be blocked; the thank-you page then asks for the details again
     }
 
     if (!payment) {
@@ -168,7 +200,7 @@ export function RoomRegistrationDialog() {
               )}
             </div>
             <a href="/thank-you" className="mt-8 inline-block text-sm text-muted-foreground underline-offset-4 hover:text-primary hover:underline">
-              Already paid? Continue
+              Already paid? Get your share card →
             </a>
           </div>
         ) : status === "done" ? (
@@ -179,6 +211,9 @@ export function RoomRegistrationDialog() {
               Your request to join {selectedRoom?.title ?? "your chosen room"} has been received. We’ll be in touch; this is not yet confirmation of membership.
             </DialogDescription>
             <Button className="mt-8" onClick={() => setOpen(false)}>Close</Button>
+            <a href="/thank-you" className="mt-6 block text-sm text-primary underline-offset-4 hover:underline">
+              Get your share card →
+            </a>
           </div>
         ) : (
           <div className="px-6 py-8 sm:px-10 sm:py-10">
