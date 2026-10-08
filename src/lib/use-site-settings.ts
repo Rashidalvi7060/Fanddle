@@ -15,6 +15,7 @@ export type SiteSettingsRow = {
   hero_headline: string;
   hero_highlight: string;
   hero_subtext: string;
+  payment_html: string;
 };
 
 // Used until the database answers (and if it ever fails).
@@ -29,6 +30,7 @@ export const defaultSettings: SiteSettingsRow = {
   hero_highlight: "alone?",
   hero_subtext:
     "Somewhere in the world, someone has faced what you're facing. Someone has learned something you haven't. Someone might know a way forward that you haven't discovered yet.",
+  payment_html: "",
 };
 
 export function useSiteSettings() {
