@@ -16,6 +16,8 @@ export type SiteSettingsRow = {
   hero_highlight: string;
   hero_subtext: string;
   payment_html: string;
+  referral_enabled: boolean;
+  referral_offer: string;
 };
 
 // Used until the database answers (and if it ever fails).
@@ -31,6 +33,8 @@ export const defaultSettings: SiteSettingsRow = {
   hero_subtext:
     "Somewhere in the world, someone has faced what you're facing. Someone has learned something you haven't. Someone might know a way forward that you haven't discovered yet.",
   payment_html: "",
+  referral_enabled: true,
+  referral_offer: "",
 };
 
 export function useSiteSettings() {
