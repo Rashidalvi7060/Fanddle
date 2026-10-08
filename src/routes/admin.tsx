@@ -130,6 +130,9 @@ type Registration = {
   room_id: string;
   room_name: string;
   status: string;
+  share_proof_url: string | null;
+  ref_code: string | null;
+  referred_by: string | null;
   created_at: string;
 };
 
@@ -163,6 +166,31 @@ function UsersTab() {
     else setRows((r) => r.map((x) => (x.id === id ? { ...x, status } : x)));
   };
 
+  // who invited whom (a person's own email never counts as a referral)
+  const byCode = useMemo(() => {
+    const m = new Map<string, Registration>();
+    rows.forEach((r) => {
+      if (r.ref_code) m.set(r.ref_code, r);
+    });
+    return m;
+  }, [rows]);
+
+  const stats = useMemo(() => {
+    const m = new Map<string, { all: Set<string>; ok: Set<string> }>();
+    rows.forEach((r) => {
+      if (!r.referred_by) return;
+      const referrer = byCode.get(r.referred_by);
+      const e = r.email.toLowerCase();
+      if (!referrer || referrer.email.toLowerCase() === e) return;
+      const key = referrer.email.toLowerCase();
+      const s = m.get(key) ?? { all: new Set<string>(), ok: new Set<string>() };
+      s.all.add(e);
+      if (r.status === "paid" || r.status === "approved") s.ok.add(e);
+      m.set(key, s);
+    });
+    return m;
+  }, [rows, byCode]);
+
   const remove = async (id: string) => {
     if (!window.confirm("Delete this registration? This cannot be undone.")) return;
     const { error } = await db.from("fanddle_room_registrations").delete().eq("id", id);
@@ -173,8 +201,8 @@ function UsersTab() {
   const exportCsv = () => {
     const esc = (v: string | number | null) => `"${String(v ?? "").replace(/"/g, '""')}"`;
     const lines = [
-      ["Name", "Email", "Phone", "Age", "City", "Occupation", "Room", "Reason", "Status", "Registered at"].join(","),
-      ...filtered.map((r) => [r.name, r.email, r.phone, r.age, r.city, r.occupation, `${r.room_id} ${r.room_name}`, r.reason, r.status, new Date(r.created_at).toLocaleString("en-IN")].map(esc).join(",")),
+      ["Name", "Email", "Phone", "Age", "City", "Occupation", "Room", "Reason", "Status", "Share link", "Referred by", "Qualified referrals", "Registered at"].join(","),
+      ...filtered.map((r) => [r.name, r.email, r.phone, r.age, r.city, r.occupation, `${r.room_id} ${r.room_name}`, r.reason, r.status, r.share_proof_url, byCode.get(r.referred_by ?? "")?.name ?? "", stats.get(r.email.toLowerCase())?.ok.size ?? 0, new Date(r.created_at).toLocaleString("en-IN")].map(esc).join(",")),
     ];
     const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -203,7 +231,7 @@ function UsersTab() {
           <table className="w-full text-left text-sm">
             <thead className="bg-card text-xs text-muted-foreground">
               <tr>
-                {["Name", "Email", "Phone", "City", "Room", "Status", "Registered", ""].map((h) => (
+                {["Name", "Email", "Phone", "City", "Room", "Status", "Shared post", "Referrals", "Came via", "Registered", ""].map((h) => (
                   <th key={h} className="px-4 py-3 font-semibold">{h}</th>
                 ))}
               </tr>
@@ -220,6 +248,25 @@ function UsersTab() {
                     <span className={`rounded-full border px-2 py-0.5 text-xs ${r.status === "approved" ? "border-primary text-primary" : r.status === "rejected" ? "border-red-400 text-red-400" : "border-border text-muted-foreground"}`}>
                       {r.status}
                     </span>
+                  </td>
+                  <td className="px-4 py-3 text-xs">
+                    {r.share_proof_url && /^https?:\/\//i.test(r.share_proof_url) ? (
+                      <a href={r.share_proof_url} target="_blank" rel="noreferrer noopener" className="text-primary underline-offset-4 hover:underline">View post</a>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3 text-xs">
+                    {stats.get(r.email.toLowerCase()) ? (
+                      <span>
+                        <b className="text-primary">{stats.get(r.email.toLowerCase())!.ok.size}</b> paid / {stats.get(r.email.toLowerCase())!.all.size}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-xs">
+                    {r.referred_by && byCode.get(r.referred_by) ? byCode.get(r.referred_by)!.name : <span className="text-muted-foreground">—</span>}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">{new Date(r.created_at).toLocaleString("en-IN")}</td>
                   <td className="whitespace-nowrap px-4 py-3 text-xs">
@@ -344,6 +391,29 @@ function SettingsTab() {
             This does not look like Razorpay button code or a link. Only scripts from checkout.razorpay.com are allowed to run.
           </p>
         )}
+      </section>
+
+      <section className="space-y-4 rounded-2xl border border-border bg-card p-6">
+        <p className="font-display text-lg font-bold">Referral program</p>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={form.referral_enabled} onChange={(e) => set("referral_enabled", e.target.checked)} />
+          Show the "invite friends" box with a personal link on the thank-you page
+        </label>
+        <Field
+          label="Benefits for members who bring friends"
+          hint="Shown on the thank-you page. Only promise what you will really give. Leave empty to show only the link and the count."
+        >
+          <textarea
+            className={inp}
+            rows={4}
+            placeholder="Example: Bring 3 friends who join and get priority access to your room and a Founding Referrer badge."
+            value={form.referral_offer}
+            onChange={(e) => set("referral_offer", e.target.value)}
+          />
+        </Field>
+        <p className="text-xs text-muted-foreground">
+          A friend counts as "paid" when you mark their registration as Paid or Approved in the Registered users tab.
+        </p>
       </section>
 
       <section className="space-y-4 rounded-2xl border border-border bg-card p-6">
