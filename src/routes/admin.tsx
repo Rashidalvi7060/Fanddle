@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { defaultSettings, type SiteSettingsRow } from "@/lib/use-site-settings";
+import { hasRazorpayButton, isPaymentUrl } from "@/components/payment-button";
 
 const db = supabase as any;
 
@@ -128,6 +129,7 @@ type Registration = {
   reason: string;
   room_id: string;
   room_name: string;
+  status: string;
   created_at: string;
 };
 
@@ -155,6 +157,12 @@ function UsersTab() {
     return rows.filter((r) => [r.name, r.email, r.phone, r.city, r.room_name, r.occupation].some((v) => (v ?? "").toLowerCase().includes(s)));
   }, [rows, q]);
 
+  const setStatus = async (id: string, status: string) => {
+    const { error } = await db.from("fanddle_room_registrations").update({ status }).eq("id", id);
+    if (error) setError(error.message);
+    else setRows((r) => r.map((x) => (x.id === id ? { ...x, status } : x)));
+  };
+
   const remove = async (id: string) => {
     if (!window.confirm("Delete this registration? This cannot be undone.")) return;
     const { error } = await db.from("fanddle_room_registrations").delete().eq("id", id);
@@ -165,8 +173,8 @@ function UsersTab() {
   const exportCsv = () => {
     const esc = (v: string | number | null) => `"${String(v ?? "").replace(/"/g, '""')}"`;
     const lines = [
-      ["Name", "Email", "Phone", "Age", "City", "Occupation", "Room", "Reason", "Registered at"].join(","),
-      ...filtered.map((r) => [r.name, r.email, r.phone, r.age, r.city, r.occupation, `${r.room_id} ${r.room_name}`, r.reason, new Date(r.created_at).toLocaleString("en-IN")].map(esc).join(",")),
+      ["Name", "Email", "Phone", "Age", "City", "Occupation", "Room", "Reason", "Status", "Registered at"].join(","),
+      ...filtered.map((r) => [r.name, r.email, r.phone, r.age, r.city, r.occupation, `${r.room_id} ${r.room_name}`, r.reason, r.status, new Date(r.created_at).toLocaleString("en-IN")].map(esc).join(",")),
     ];
     const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -180,7 +188,7 @@ function UsersTab() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
-        <p className="font-display text-lg font-bold">{rows.length} registered</p>
+        <p className="font-display text-lg font-bold">{rows.length} registered · {rows.filter((r) => r.status === "approved").length} approved</p>
         <input className={`${inp} max-w-xs`} placeholder="Search name, email, phone, city, room" value={q} onChange={(e) => setQ(e.target.value)} />
         <button className={btnGhost} onClick={load}>Refresh</button>
         <button className={btnGhost} onClick={exportCsv} disabled={!filtered.length}>Download CSV</button>
@@ -195,7 +203,7 @@ function UsersTab() {
           <table className="w-full text-left text-sm">
             <thead className="bg-card text-xs text-muted-foreground">
               <tr>
-                {["Name", "Email", "Phone", "City", "Room", "Registered", ""].map((h) => (
+                {["Name", "Email", "Phone", "City", "Room", "Status", "Registered", ""].map((h) => (
                   <th key={h} className="px-4 py-3 font-semibold">{h}</th>
                 ))}
               </tr>
@@ -208,9 +216,23 @@ function UsersTab() {
                   <td className="px-4 py-3">{r.phone}</td>
                   <td className="px-4 py-3">{r.city}</td>
                   <td className="px-4 py-3">{r.room_id} · {r.room_name}</td>
-                  <td className="whitespace-nowrap px-4 py-3">{new Date(r.created_at).toLocaleString("en-IN")}</td>
                   <td className="px-4 py-3">
-                    <button className="text-xs text-red-400 hover:underline" onClick={() => remove(r.id)}>Delete</button>
+                    <span className={`rounded-full border px-2 py-0.5 text-xs ${r.status === "approved" ? "border-primary text-primary" : r.status === "rejected" ? "border-red-400 text-red-400" : "border-border text-muted-foreground"}`}>
+                      {r.status}
+                    </span>
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3">{new Date(r.created_at).toLocaleString("en-IN")}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-xs">
+                    {r.status !== "approved" && (
+                      <button className="mr-3 font-bold text-primary hover:underline" onClick={() => setStatus(r.id, "approved")}>Approve</button>
+                    )}
+                    {r.status === "pending" && (
+                      <button className="mr-3 text-foreground hover:underline" onClick={() => setStatus(r.id, "paid")}>Mark paid</button>
+                    )}
+                    {r.status !== "rejected" && (
+                      <button className="mr-3 text-muted-foreground hover:underline" onClick={() => setStatus(r.id, "rejected")}>Reject</button>
+                    )}
+                    <button className="text-red-400 hover:underline" onClick={() => remove(r.id)}>Delete</button>
                   </td>
                 </tr>
               ))}
@@ -307,6 +329,21 @@ function SettingsTab() {
         <Field label="Countdown title">
           <input className={inp} value={form.countdown_text} onChange={(e) => set("countdown_text", e.target.value)} />
         </Field>
+      </section>
+
+      <section className="space-y-4 rounded-2xl border border-border bg-card p-6">
+        <p className="font-display text-lg font-bold">Payment</p>
+        <Field
+          label="Razorpay payment button code, or a payment link URL"
+          hint="Paste the full Razorpay Payment Button code (the <form><script …></form> snippet) or just a Payment Link / Payment Page URL. Leave empty to turn payment off (the form will then only save the registration)."
+        >
+          <textarea className={`${inp} font-mono text-xs`} rows={5} value={form.payment_html} onChange={(e) => set("payment_html", e.target.value)} />
+        </Field>
+        {form.payment_html.trim() && !isPaymentUrl(form.payment_html) && !hasRazorpayButton(form.payment_html) && (
+          <p className="text-sm text-red-400">
+            This does not look like Razorpay button code or a link. Only scripts from checkout.razorpay.com are allowed to run.
+          </p>
+        )}
       </section>
 
       <section className="space-y-4 rounded-2xl border border-border bg-card p-6">
