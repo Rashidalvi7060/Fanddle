@@ -11,6 +11,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { registrationFields, siteSettings } from "@/data/site-settings";
 import { rooms, type Room } from "@/data/rooms";
+import { useSiteSettings } from "@/lib/use-site-settings";
+import { PaymentButton, isPaymentUrl } from "@/components/payment-button";
 
 const openRegistrationEvent = "fanddle:open-registration";
 
@@ -60,18 +62,20 @@ const emptyForm: FormValues = {
   reason: "",
 };
 
-function registrationIsOpen() {
-  return siteSettings.registrationStatus === "OPEN" && Date.now() < new Date(siteSettings.registrationDeadline).getTime();
-}
-
 export function RoomRegistrationDialog() {
   const [open, setOpen] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [values, setValues] = useState<FormValues>(emptyForm);
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "pay" | "done">("idle");
   const selectedRoom = rooms.find((room) => room.id === roomId);
+  const { settings } = useSiteSettings();
+  const payment = settings.payment_html.trim();
+
+  const registrationIsOpen = () =>
+    siteSettings.registrationStatus === "OPEN" &&
+    Date.now() < new Date(settings.registration_deadline).getTime();
 
   useEffect(() => {
     const handleOpen = (event: Event) => {
@@ -127,7 +131,15 @@ export function RoomRegistrationDialog() {
       setError("We couldn't save your registration. Please try again.");
       return;
     }
-    setStatus("done");
+
+    if (!payment) {
+      setStatus("done");
+      return;
+    }
+    setStatus("pay");
+    if (isPaymentUrl(payment)) {
+      window.location.href = payment;
+    }
   }
 
   const fieldClass = "w-full rounded-md border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -135,7 +147,31 @@ export function RoomRegistrationDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-h-[90dvh] overflow-y-auto border-border bg-card p-0 sm:max-w-2xl">
-        {status === "done" ? (
+        {status === "pay" ? (
+          <div className="px-6 py-12 text-center sm:px-12">
+            <p className="eyebrow text-primary">ONE LAST STEP</p>
+            <DialogTitle className="mt-5 font-display text-4xl font-extrabold uppercase text-foreground">Complete payment.</DialogTitle>
+            <DialogDescription className="mx-auto mt-4 max-w-md text-base leading-relaxed">
+              Your registration for {selectedRoom?.title ?? "your chosen room"} is saved. Please pay using the
+              same email ({values.email.toLowerCase()}) so we can match your payment.
+            </DialogDescription>
+            <div className="mt-8">
+              {isPaymentUrl(payment) ? (
+                <a
+                  href={payment}
+                  className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-4 font-display text-sm font-bold tracking-wider text-primary-foreground hover:opacity-90"
+                >
+                  CONTINUE TO PAYMENT →
+                </a>
+              ) : (
+                <PaymentButton html={payment} />
+              )}
+            </div>
+            <a href="/thank-you" className="mt-8 inline-block text-sm text-muted-foreground underline-offset-4 hover:text-primary hover:underline">
+              Already paid? Continue
+            </a>
+          </div>
+        ) : status === "done" ? (
           <div className="px-6 py-12 text-center sm:px-12">
             <p className="eyebrow text-primary">FANDDLE ROOM REGISTRATION</p>
             <DialogTitle className="mt-5 font-display text-4xl font-extrabold text-foreground">YOU’RE IN.</DialogTitle>
@@ -189,7 +225,7 @@ export function RoomRegistrationDialog() {
               {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
               {!registrationIsOpen() && <p className="text-sm text-muted-foreground">Founding registration is closed.</p>}
               <Button type="submit" disabled={status === "sending" || !registrationIsOpen()} className="w-full py-6 font-display font-bold tracking-wider">
-                {status === "sending" ? "SENDING…" : "SUBMIT ROOM REGISTRATION →"}
+                {status === "sending" ? "SENDING…" : payment ? "CONTINUE TO PAYMENT →" : "SUBMIT ROOM REGISTRATION →"}
               </Button>
             </form>
           </div>
