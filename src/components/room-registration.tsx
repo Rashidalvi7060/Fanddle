@@ -192,10 +192,10 @@ export function RoomRegistrationDialog() {
                   href={payment}
                   className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-4 font-display text-sm font-bold tracking-wider text-primary-foreground hover:opacity-90"
                 >
-                  CONTINUE TO PAYMENT →
+                  PAY NOW →
                 </a>
               ) : (
-                <PaymentButton html={payment} />
+                <PaymentButton html={payment} label="PAY NOW →" />
               )}
             </div>
             <a href="/thank-you" className="mt-8 inline-block text-sm text-muted-foreground underline-offset-4 hover:text-primary hover:underline">
@@ -259,7 +259,7 @@ export function RoomRegistrationDialog() {
               {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
               {!registrationIsOpen() && <p className="text-sm text-muted-foreground">Founding registration is closed.</p>}
               <Button type="submit" disabled={status === "sending" || !registrationIsOpen()} className="w-full py-6 font-display font-bold tracking-wider">
-                {status === "sending" ? "SENDING…" : payment ? "CONTINUE TO PAYMENT →" : "SUBMIT ROOM REGISTRATION →"}
+                {status === "sending" ? "SENDING…" : payment ? "REGISTER & PAY →" : "SUBMIT ROOM REGISTRATION →"}
               </Button>
             </form>
           </div>
