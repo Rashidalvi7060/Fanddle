@@ -15,7 +15,8 @@ function getTimeRemaining(deadline: string) {
 
 export function RegistrationCounter() {
   const { settings, displayCount } = useSiteSettings();
-  const [time, setTime] = useState(() => getTimeRemaining(settings.registration_deadline));
+  // starts empty so the server and the browser draw the same thing; the real time is filled in after load
+  const [time, setTime] = useState<ReturnType<typeof getTimeRemaining> | null>(null);
 
   useEffect(() => {
     setTime(getTimeRemaining(settings.registration_deadline));
@@ -24,7 +25,7 @@ export function RegistrationCounter() {
     return () => window.clearInterval(timer);
   }, [settings.registration_deadline, settings.show_countdown]);
 
-  const isClosed = Object.values(time).every((value) => value === 0);
+  const isClosed = time !== null && Object.values(time).every((value) => value === 0);
   const closesOn = new Date(settings.registration_deadline).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "long",
@@ -49,11 +50,11 @@ export function RegistrationCounter() {
         {settings.show_countdown && !isClosed ? (
           <div
             className="mt-5 grid grid-cols-4 gap-3"
-            aria-label={`${time.days} days, ${time.hours} hours, ${time.minutes} minutes, ${time.seconds} seconds remaining`}
+            aria-label={time ? `${time.days} days, ${time.hours} hours, ${time.minutes} minutes, ${time.seconds} seconds remaining` : "Countdown loading"}
           >
-            {([["DAYS", time.days], ["HOURS", time.hours], ["MINUTES", time.minutes], ["SECONDS", time.seconds]] as const).map(([label, value]) => (
+            {([["DAYS", time?.days], ["HOURS", time?.hours], ["MINUTES", time?.minutes], ["SECONDS", time?.seconds]] as const).map(([label, value]) => (
               <div key={label} className="text-center">
-                <p className="font-display text-3xl font-bold tabular-nums text-foreground">{String(value).padStart(2, "0")}</p>
+                <p className="font-display text-3xl font-bold tabular-nums text-foreground">{value === undefined ? "--" : String(value).padStart(2, "0")}</p>
                 <p className="mt-2 text-[9px] font-semibold tracking-wider text-muted-foreground">{label}</p>
               </div>
             ))}
