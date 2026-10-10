@@ -20,10 +20,15 @@ export function PaymentButton({ html, label = "PAY NOW →" }: { html: string; l
   const hostRef = useRef<HTMLFormElement>(null);
   const [ready, setReady] = useState(false);
 
+  // Razorpay draws its button as a link: <span class="razorpay-payment-button"><a href="https://razorpay.com/payment-button/...">
+  const findRazorpayLink = () =>
+    hostRef.current?.querySelector<HTMLAnchorElement>('a[href*="razorpay.com"]') ?? null;
   const findRazorpayButton = () =>
+    findRazorpayLink() ??
     hostRef.current?.querySelector<HTMLElement>(
       "button.razorpay-payment-button, .razorpay-payment-button, button[type=submit], input[type=submit]",
-    ) ?? null;
+    ) ??
+    null;
 
   useEffect(() => {
     const host = hostRef.current;
@@ -46,16 +51,21 @@ export function PaymentButton({ html, label = "PAY NOW →" }: { html: string; l
       host.appendChild(script);
     });
     check();
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      host.innerHTML = "";
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [html]);
 
   const pay = () => {
-    const el = findRazorpayButton();
-    // eslint-disable-next-line no-console
-    console.info("[fanddle] razorpay button found:", el?.outerHTML?.slice(0, 300) ?? "none");
-    if (!el) return;
-    el.click();
+    const link = findRazorpayLink();
+    if (link?.href) {
+      // go straight to Razorpay's payment page
+      window.location.assign(link.href);
+      return;
+    }
+    findRazorpayButton()?.click();
   };
 
   return (
