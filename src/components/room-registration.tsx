@@ -195,7 +195,7 @@ export function RoomRegistrationDialog() {
                   PAY NOW →
                 </a>
               ) : (
-                <PaymentButton html={payment} label="PAY NOW →" />
+                <PaymentButton html={payment} />
               )}
             </div>
             <a href="/thank-you" className="mt-8 inline-block text-sm text-muted-foreground underline-offset-4 hover:text-primary hover:underline">
