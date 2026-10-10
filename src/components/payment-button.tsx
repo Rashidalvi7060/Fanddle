@@ -50,7 +50,13 @@ export function PaymentButton({ html, label = "PAY NOW →" }: { html: string; l
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [html]);
 
-  const pay = () => findRazorpayButton()?.click();
+  const pay = () => {
+    const el = findRazorpayButton();
+    // eslint-disable-next-line no-console
+    console.info("[fanddle] razorpay button found:", el?.outerHTML?.slice(0, 300) ?? "none");
+    if (!el) return;
+    el.click();
+  };
 
   return (
     <div className="flex flex-col items-center gap-3">
