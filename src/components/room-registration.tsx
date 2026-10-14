@@ -198,9 +198,7 @@ export function RoomRegistrationDialog() {
                 <PaymentButton html={payment} />
               )}
             </div>
-            <a href="/thank-you" className="mt-8 inline-block text-sm text-muted-foreground underline-offset-4 hover:text-primary hover:underline">
-              Already paid? Get your share card →
-            </a>
+            
           </div>
         ) : status === "done" ? (
           <div className="px-6 py-12 text-center sm:px-12">
