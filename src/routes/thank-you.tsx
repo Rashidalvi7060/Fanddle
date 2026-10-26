@@ -281,7 +281,7 @@ function ThankYou() {
         <p className="eyebrow text-primary">FANDDLE FOUNDING ROOMS</p>
         <h1 className="mt-4 font-display text-4xl font-extrabold uppercase text-foreground sm:text-5xl">Thank you.</h1>
         <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-          Thanks for registering. If you have completed your payment, our team will verify it and approve your access.
+          Your profile will be activated very soon. Our team will verify your payment and approve your access.
           Sharing is optional, but there are benefits for bringing friends.
         </p>
 
