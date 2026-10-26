@@ -24,6 +24,7 @@ export function SiteFooter() {
             <div className="space-y-3">
               <p className="eyebrow">Legal</p>
               <Link to="/terms" className={item}>Terms</Link>
+              <Link to="/terms" hash="refund" className={item}>Refund Policy</Link>
               <Link to="/terms" hash="privacy" className={item}>Privacy Policy</Link>
               <Link to="/terms" hash="guidelines" className={item}>Community Guidelines</Link>
             </div>
@@ -44,8 +45,7 @@ export function SiteFooter() {
           medical, psychological and financial questions may require qualified professionals.
         </p>
         <p className="mt-4 text-xs text-muted-foreground">
-          © {new Date().getFullYear()} FANDDLE. Concept stage. Details marked as placeholders will
-          be confirmed before registration opens.
+          © {new Date().getFullYear()} FANDDLE. All rights reserved.
         </p>
       </div>
     </footer>
