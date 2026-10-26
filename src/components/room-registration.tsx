@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
-import { registrationFields, siteSettings } from "@/data/site-settings";
+import { registrationFields, siteSettings, FOUNDING_PRICE, FOUNDING_PRICE_NOTE } from "@/data/site-settings";
 import { rooms, type Room } from "@/data/rooms";
 import { useSiteSettings } from "@/lib/use-site-settings";
 import { PaymentButton, isPaymentUrl } from "@/components/payment-button";
@@ -184,7 +184,7 @@ export function RoomRegistrationDialog() {
             <p className="eyebrow text-primary">ONE LAST STEP</p>
             <DialogTitle className="mt-5 font-display text-4xl font-extrabold uppercase text-foreground">Complete payment.</DialogTitle>
             <DialogDescription className="mx-auto mt-4 max-w-md text-base leading-relaxed">
-              Your registration is saved. Please pay ₹899 to complete your founding membership.
+              Your registration is saved. Please pay {FOUNDING_PRICE} to complete your founding membership.
             </DialogDescription>
             <div className="mt-8">
               {isPaymentUrl(payment) ? (
@@ -219,8 +219,8 @@ export function RoomRegistrationDialog() {
               <DialogTitle className="mt-3 font-display text-3xl font-extrabold uppercase text-foreground sm:text-4xl">Choose where you belong.</DialogTitle>
               <DialogDescription className="mt-3 max-w-xl leading-relaxed">
                 Tell us a little about yourself and the room you want to join. Your details stay private.
-              </DialogDescription>              
-              <p className="mt-3 text-sm font-semibold text-primary">₹899 · One-time founding membership · Access to the whole FANDDLE platform</p>
+              </DialogDescription>
+              <p className="mt-3 text-sm font-semibold text-primary">{FOUNDING_PRICE} · {FOUNDING_PRICE_NOTE}</p>
             </DialogHeader>
 
             <form onSubmit={submit} className="mt-7 space-y-4" noValidate>
@@ -252,13 +252,13 @@ export function RoomRegistrationDialog() {
 
               <label className="flex items-start gap-3 pt-2 text-sm leading-relaxed text-muted-foreground">
                 <input type="checkbox" className="mt-1 accent-primary" checked={consent} onChange={(event) => setConsent(event.target.checked)} />
-                <span>I agree to follow FANDDLE’s community rules and understand that registration is a request, not confirmed membership.</span>
+                <span>I agree to FANDDLE’s community rules, <a href="/terms#terms" target="_blank" rel="noreferrer" className="underline">Terms</a> and <a href="/terms#refund" target="_blank" rel="noreferrer" className="underline">Refund Policy</a>, and understand that registration is a request, not confirmed membership.</span>
               </label>
 
               {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
               {!registrationIsOpen() && <p className="text-sm text-muted-foreground">Founding registration is closed.</p>}
               <Button type="submit" disabled={status === "sending" || !registrationIsOpen()} className="w-full py-6 font-display font-bold tracking-wider">
-                {status === "sending" ? "SENDING…" : payment ? "REGISTER & PAY 899 →" : "SUBMIT ROOM REGISTRATION →"}
+                {status === "sending" ? "SENDING…" : payment ? `REGISTER & PAY ${FOUNDING_PRICE} →` : "SUBMIT ROOM REGISTRATION →"}
               </Button>
             </form>
           </div>
