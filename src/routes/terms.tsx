@@ -35,19 +35,18 @@ function TermsPage() {
     <div className="min-h-screen bg-background">
       <SiteNav />
       <main className="mx-auto max-w-3xl px-5 py-20 sm:px-8 sm:py-28">
-        <p className="eyebrow">Concept-stage document</p>
+        <p className="eyebrow">Legal</p>
         <h1 className="headline mt-6 text-4xl sm:text-6xl">Terms, privacy & guidelines</h1>
         <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
-          Items marked <strong className="text-foreground">[Placeholder]</strong> will be completed
-          by FANDDLE before registration opens. Nothing here claims guarantees, certifications or
-          partnerships.
+          Nothing here claims guarantees, certifications or partnerships.
         </p>
 
         <div className="mt-14 space-y-12">
           <Section id="terms" title="Terms">
             <p>
-              FANDDLE is currently a concept and membership-interest website. Registration is not
-              open and no membership is offered on this page. Full terms of use: [Placeholder].
+              FANDDLE is a people-powered network that is currently in its founding stage.
+              Founding registration is paid and is a request for membership, not a confirmed
+              membership. Full terms of use: [Placeholder].
             </p>
             <p>
               FANDDLE plans {TOTAL_ROOMS} founding rooms, each with a maximum of{" "}
@@ -55,6 +54,10 @@ function TermsPage() {
               before launch. When a founding room reaches capacity, it closes to new founding
               members.
             </p>
+          </Section>
+
+          <Section id="refund" title="Refund & Cancellation Policy">
+            <p>[Placeholder: refund and cancellation policy will be added here.]</p>
           </Section>
 
           <Section id="guidelines" title="Community Guidelines">
