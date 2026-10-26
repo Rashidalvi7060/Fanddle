@@ -257,7 +257,7 @@ export function RoomRegistrationDialog() {
               {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
               {!registrationIsOpen() && <p className="text-sm text-muted-foreground">Founding registration is closed.</p>}
               <Button type="submit" disabled={status === "sending" || !registrationIsOpen()} className="w-full py-6 font-display font-bold tracking-wider">
-                {status === "sending" ? "SENDING…" : payment ? "REGISTER & PAY →" : "SUBMIT ROOM REGISTRATION →"}
+                {status === "sending" ? "SENDING…" : payment ? "REGISTER & PAY 899 →" : "SUBMIT ROOM REGISTRATION →"}
               </Button>
             </form>
           </div>
