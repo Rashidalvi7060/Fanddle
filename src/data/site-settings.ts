@@ -1,7 +1,10 @@
+export const FOUNDING_PRICE = "₹899";
+export const FOUNDING_PRICE_NOTE = "One-time founding membership · Access to the whole FANDDLE platform";
+
 export const siteSettings = {
   joinedCountDisplay: "100,000+",
   registrationStatus: "OPEN" as const,
-  registrationDeadline: "2026-10-15T23:59:59+05:30",
+  registrationDeadline: "2026-12-31T23:59:59+05:30",
   showCountdown: true,
   countdownText: "REGISTRATION CLOSES IN",
 };
