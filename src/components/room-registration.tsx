@@ -184,7 +184,7 @@ export function RoomRegistrationDialog() {
             <p className="eyebrow text-primary">ONE LAST STEP</p>
             <DialogTitle className="mt-5 font-display text-4xl font-extrabold uppercase text-foreground">Complete payment.</DialogTitle>
             <DialogDescription className="mx-auto mt-4 max-w-md text-base leading-relaxed">
-              Your registration is saved. Please make the payment to enter the platform.
+              Your registration is saved. Please pay ₹899 to complete your founding membership.
             </DialogDescription>
             <div className="mt-8">
               {isPaymentUrl(payment) ? (
