@@ -219,7 +219,8 @@ export function RoomRegistrationDialog() {
               <DialogTitle className="mt-3 font-display text-3xl font-extrabold uppercase text-foreground sm:text-4xl">Choose where you belong.</DialogTitle>
               <DialogDescription className="mt-3 max-w-xl leading-relaxed">
                 Tell us a little about yourself and the room you want to join. Your details stay private.
-              </DialogDescription>
+              </DialogDescription>              
+              <p className="mt-3 text-sm font-semibold text-primary">₹899 · One-time founding membership · Access to the whole FANDDLE platform</p>
             </DialogHeader>
 
             <form onSubmit={submit} className="mt-7 space-y-4" noValidate>
