@@ -69,3 +69,14 @@ export function RegistrationCounter() {
     </div>
   );
 }
+
+export function ClosingLine() {
+  const { settings } = useSiteSettings();
+  const closesOn = new Date(settings.registration_deadline).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Kolkata",
+  });
+  return <>REGISTRATION CLOSES {closesOn.toUpperCase()}.</>;
+}
