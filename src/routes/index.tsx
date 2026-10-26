@@ -4,7 +4,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { RoomDirectory } from "@/components/room-directory";
 import { Disclosure } from "@/components/disclosure";
 import { Reveal } from "@/components/reveal";
-import { RegistrationCounter } from "@/components/interest";
+import { RegistrationCounter, ClosingLine } from "@/components/interest";
+import { FOUNDING_PRICE, FOUNDING_PRICE_NOTE } from "@/data/site-settings";
 import { Button } from "@/components/ui/button";
 import { openRegistrationDialog } from "@/components/room-registration";
 import heroImg from "@/assets/hero.jpg";
@@ -261,7 +262,7 @@ function Landing() {
         <div className={`relative ${wrap}`}>
           <Reveal><h2 className={`${h2} max-w-4xl`}>This founding chapter will not open again.</h2></Reveal>
           <p className="mt-8 max-w-2xl text-lg text-muted-foreground">We are building a defined network of 200 founding rooms, with a maximum capacity of 1,000 people in each. Once all founding places are filled, registration for these specific founding rooms will close permanently.</p>
-          <p className="mt-8 font-display text-xl font-bold tracking-wider text-primary">REGISTRATION CLOSES 15 OCTOBER 2026.</p>
+          <p className="mt-8 font-display text-xl font-bold tracking-wider text-primary"><ClosingLine /></p>
           <Link to="/rooms" className={`${cta} mt-8`}>EXPLORE THE ROOMS →</Link>
         </div>
       </section>
@@ -274,7 +275,8 @@ function Landing() {
             <div>
               <h2 className={h2}>Find the room that feels like yours.</h2>
               <p className="mt-6 text-lg text-muted-foreground">Choose a room and tell us a little about yourself. Your request goes directly to the FANDDLE team for review.</p>
-              <Button onClick={() => openRegistrationDialog()} className={`${cta} mt-8`}>JOIN NOW →</Button>
+              <p className="mt-6 text-base font-semibold text-primary">{FOUNDING_PRICE} · {FOUNDING_PRICE_NOTE}</p>
+              <Button onClick={() => openRegistrationDialog()} className={`${cta} mt-6`}>JOIN NOW →</Button>
             </div>
             <div className="border-l border-border pl-8">
               <p className="font-display text-5xl font-extrabold text-foreground">200</p>
